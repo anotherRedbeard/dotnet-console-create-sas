@@ -45,7 +45,7 @@ static Uri GenerateSasToken(IConfiguration configuration, SasResourceType sasRes
     var containerName = configuration.GetSection("AzureStorageConfig")["ContainerName"] ?? string.Empty;
     var startIPAddress = configuration.GetSection("AzureStorageConfig")["IpAddressStart"] ?? string.Empty;
     var endIPAddress = configuration.GetSection("AzureStorageConfig")["IpAddressEnd"] ?? string.Empty;
-    var blobName = configuration.GetSection("AzureStorageConfig")["BlobName"] ?? string.Empty;
+    var blobName = configuration.GetSection("AzureStorageConfig")["BlobNameForSAS"] ?? string.Empty;
     var blobServiceClient = new BlobServiceClient(connectionString);
     var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
     var blobClient = containerClient.GetBlobClient(blobName);
@@ -87,7 +87,7 @@ static void TestSasToken(Uri uri, IConfiguration configuration)
     Console.WriteLine("Testing the SAS token...");
     try
     {
-        var testFileName = configuration.GetSection("AzureStorageConfig")["BlobName"] ?? string.Empty;
+        var testFileName = configuration.GetSection("AzureStorageConfig")["BlobNameForTest"] ?? string.Empty;
         var testContent = configuration.GetSection("AzureStorageConfig")["BlobContentAsString"] ?? string.Empty;
         var containerName = configuration.GetSection("AzureStorageConfig")["ContainerName"] ?? string.Empty;
 
