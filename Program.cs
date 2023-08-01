@@ -16,9 +16,6 @@ string action = args.Length > 0 ? args[0].ToLower() : "greet";
 
 var result = action switch
 {
-    "greet" => Greet(),
-    "date" => ShowCurrentDate(),
-    "time" => ShowCurrentTime(),
     "create-blob" => CreateSasToken(args, configuration, SasResourceType.Blob),
     "create-container" => CreateSasToken(args, configuration, SasResourceType.Container),
     _ => InvalidOption()
@@ -26,48 +23,26 @@ var result = action switch
 
 Environment.ExitCode = result;
 
-static int Greet()
-{
-    Console.WriteLine("What is your name?");
-    var name = Console.ReadLine();
-    Console.WriteLine($"Hello, {name}!");
-    return 0;
-}
-
-static int ShowCurrentDate()
-{
-    var currentDate = DateTime.Now;
-    Console.WriteLine($"Today's date is: {currentDate:d}");
-    return 0;
-}
-
-static int ShowCurrentTime()
-{
-    var currentTime = DateTime.Now;
-    Console.WriteLine($"Current time is: {currentTime:t}");
-    return 0;
-}
-
 static int CreateSasToken(string[] args, IConfiguration configuration, SasResourceType sasResourceType = SasResourceType.Blob)
 {
-    var connectionString = configuration.GetSection("AzureStorageConfig")["ConnectionString"] ?? string.Empty;
-    var containerName = configuration.GetSection("AzureStorageConfig")["ContainerName"] ?? string.Empty;
-
     if (args.Length == 2 && args[1].ToLower() == "test")
     {
-        var sasToken = GenerateSasToken(connectionString, containerName, configuration, sasResourceType);
+        var sasToken = GenerateSasToken(configuration, sasResourceType);
         TestSasToken(sasToken, configuration);
     }
     else
     {
-        GenerateSasToken(connectionString, containerName, configuration, sasResourceType);
+        GenerateSasToken(configuration, sasResourceType);
     }
     return 0;
 }
 
-static Uri GenerateSasToken(string connectionString, string containerName, IConfiguration configuration, SasResourceType sasResourceType)
+static Uri GenerateSasToken(IConfiguration configuration, SasResourceType sasResourceType)
 {
+    //Setting this to a dummy value for now
     Uri sasToken = new Uri("https://localhost");
+    var connectionString = configuration.GetSection("AzureStorageConfig")["ConnectionString"] ?? string.Empty;
+    var containerName = configuration.GetSection("AzureStorageConfig")["ContainerName"] ?? string.Empty;
     var startIPAddress = configuration.GetSection("AzureStorageConfig")["IpAddressStart"] ?? string.Empty;
     var endIPAddress = configuration.GetSection("AzureStorageConfig")["IpAddressEnd"] ?? string.Empty;
     var blobName = configuration.GetSection("AzureStorageConfig")["BlobName"] ?? string.Empty;
@@ -114,10 +89,11 @@ static void TestSasToken(Uri uri, IConfiguration configuration)
     {
         var testFileName = configuration.GetSection("AzureStorageConfig")["BlobName"] ?? string.Empty;
         var testContent = configuration.GetSection("AzureStorageConfig")["BlobContentAsString"] ?? string.Empty;
+        var containerName = configuration.GetSection("AzureStorageConfig")["ContainerName"] ?? string.Empty;
 
         // Create BlobClient with the URI containing the SAS token
         var blobServiceClient = new BlobServiceClient(uri, new BlobClientOptions { Transport = new HttpClientTransport() });
-        var blobContainerClient = blobServiceClient.GetBlobContainerClient("test");
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
         var blobClient = blobContainerClient.GetBlobClient(testFileName);
 
         var blobContent = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(testContent));
@@ -132,6 +108,6 @@ static void TestSasToken(Uri uri, IConfiguration configuration)
 
 static int InvalidOption()
 {
-    Console.WriteLine("Invalid option. Available options: greet, date, time, create-blob [test], create-container [test]");
+    Console.WriteLine("Invalid option. Available options: create-blob [test], create-container [test]");
     return 1;
 }

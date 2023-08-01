@@ -17,6 +17,7 @@ This is meant to be a repo that you can clone and use as you like, but please ke
 - **Azure Subscription**
 - **This repo cloned in your own GitHub repo**
 - **Storage Account with a container**
+  - You will get the ConnectionString from this storage account to be used in the `appsettings.json` file
 
 ### Running Options
 
@@ -24,9 +25,6 @@ This is meant to be a repo that you can clone and use as you like, but please ke
 | -------- | -------- |
 | create-blob [test]   | Create the sas token with blob context, optional attribute to test the sas token by creating a "Hello World" file in the container   |
 | create-container [test]  | Create the sas token with container context, optional attribute to test the sas token by creating a "Hello World" file in the container   |
-| greet   | Will prompt you for a name and echo the name you type   |
-| date   | Display the current date   |
-| time   | Display the current time   |
 
 ## Run Locally
 
