@@ -8,6 +8,8 @@ This project was created initially using `dotnet new console` and by using the e
 
 Each SAS must be signed with a key and this example is creating the SAS tokens signed with an account storage key.  One thing to call out is in the appsettings.json file there is a `BlobNameForSAS` and `BlobNameForTest`.  This is so you can confirm that when you create a SAS for a particular blob name, you can only create that blob name in the container.  When you create the SAS for a container you can create whatever blob name you want in the test.
 
+Here is a link to a [blog post](https://techcommunity.microsoft.com/t5/healthcare-and-life-sciences/programmatically-create-sas-tokens-in-net/ba-p/3889848) that goes over the specifics on creating SAS tokens signing it with a shared key like I do in this repo.
+
 ## How to use
 
 This is meant to be a repo that you can clone and use as you like, but please keep in mind this is not intended to be 'production-ready' code.  Check out the "Run Locally" section.
